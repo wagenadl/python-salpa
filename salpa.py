@@ -4,7 +4,11 @@ import ctypes as ct
 import numpy as np
 import os
 
-_salpa = np.ctypeslib.load_library('libsalpa', os.path.dirname(__file__))
+if os.name=='posix':
+    pfx = 'lib'
+else:
+    pfx =''
+_salpa = np.ctypeslib.load_library(pfx + 'salpa', os.path.dirname(__file__))
 
 class Salpa:
     def __init__(self, data, tau, rail1=-np.inf, rail2=np.inf, thresh=np.inf,
