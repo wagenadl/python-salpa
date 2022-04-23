@@ -9,6 +9,14 @@ if os.name=='posix':
 else:
     pfx =''
 _salpa = np.ctypeslib.load_library(pfx + 'salpa', os.path.dirname(__file__))
+_salpa.salpa_start.argtypes = [ct.c_void_p, ct.c_void_p, ct.c_uint64,
+    ct.c_double, ct.c_double, ct.c_double,
+    ct.c_int, 
+    ct.c_int, ct.c_int, ct.c_int]
+_salpa.salpa_start.restype = ct.c_void_p
+_salpa.salpa_partial.argtypes = [ct.c_void_p, ct.c_uint64]
+_salpa.salpa_forcepeg.argtypes = [ct.c_void_p, ct.c_uint64, ct.c_uint64]
+_salpa.salpa_end.argtypes = [ct.c_void_p]
 
 class Salpa:
     def __init__(self, data, tau, rail1=-np.inf, rail2=np.inf, thresh=np.inf,

@@ -3,6 +3,13 @@
 #include "LocalFit.h"
 #include <stdio.h>
 
+
+#ifdef _WIN32
+#define WINPFX __declspec(dllexport)
+#else
+#define WINPFX
+#endif
+
 bool _sanity() {
   timeref_t TEST = INFTY;
   TEST++;
@@ -19,7 +26,7 @@ bool _sanity() {
 
 
 extern "C" {
-  LocalFit *salpa_start(raw_t const *data, raw_t *out, uint64_t N,
+  WINPFX void *salpa_start(raw_t const *data, raw_t *out, uint64_t N,
 			double rail1,
 			double rail2,
 			double thresh,
@@ -40,21 +47,24 @@ extern "C" {
 				t_blankdepeg, t_ahead,
 				t_chi2);
     lf->setrail(rail1, rail2);
-    return lf;
+     return (void*)(lf); // to make this work Windows
   }
 
-  void salpa_partial(LocalFit *lf, uint64_t t_end) {
+  WINPFX void salpa_partial(void *lf0, uint64_t t_end) {
     // process up to given time point
+    LocalFit *lf = (LocalFit *)(lf0);
     lf->process(t_end);
   }
 
-  void salpa_forcepeg(LocalFit *lf, uint64_t t_from, uint64_t t_to) {
+  WINPFX void salpa_forcepeg(void *lf0, uint64_t t_from, uint64_t t_to) {
     // processes up to t_to, forcing peg between t_from and t_to.
+    LocalFit *lf = (LocalFit *)(lf0);
     lf->forcepeg(t_from, t_to);
   }
 
-  void salpa_end(LocalFit *lf) {
+  WINPFX void salpa_end(void *lf0) {
     // free resources
+    LocalFit *lf = (LocalFit *)(lf0);
     delete lf;
   }
 }

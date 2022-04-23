@@ -1,2 +1,2 @@
-from . import salpa
+from .salpa import Salpa, salpa
 
